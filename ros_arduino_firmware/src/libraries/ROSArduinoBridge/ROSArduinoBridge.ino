@@ -48,6 +48,7 @@
 #define USE_BASE      // Enable the base controller code
 //#undef USE_BASE     // Disable the base controller code
 
+#define USE_I2C
 #define SERIAL_STREAM Serial
 #define DEBUG_SERIAL_STREAM Serial
 
