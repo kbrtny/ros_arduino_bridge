@@ -308,13 +308,14 @@ class ArduinoSerial(Arduino):
 """ Basic test for connectivity """
 if __name__ == "__main__":
     if os.name == "posix":
-        portName = "/dev/ttyACM0"
+        #portName = "/dev/ttyACM0"
+	portName = "/dev/ttyAMA0"
     else:
         portName = "COM43" # Windows style COM port.
 
-    baudRate = 57600
+    baudRate = 115200 #57600
 
-    myArduino = Arduino(port=portName, baudrate=baudRate, timeout=0.5)
+    myArduino = ArduinoSerial(port=portName, baudrate=baudRate, timeout=0.5)
     myArduino.connect()
 
     print "Sleeping for 1 second..."
@@ -324,7 +325,7 @@ if __name__ == "__main__":
     print "Reading on digital port 0", myArduino.digital_read(0)
     print "Blinking the LED 3 times"
     for i in range(3):
-        myArduino.digital_write(13, 1)
+        myArduino.digital_write(13, 1) # 13 = yellow LED, 17 = red LED
         time.sleep(1.0)
     #print "Current encoder counts", myArduino.encoders()
 
