@@ -84,7 +84,7 @@
 #define BAUDRATE     115200
 
 /* Maximum PWM signal */
-#define MAX_PWM        255
+//#define MAX_PWM        255
 
 // merose: The A-Star has a PWM range of +/- 400 for the motors. Pololu
 // calls them 6V motors, so Marco originally reduced the maximum PWM
@@ -140,12 +140,12 @@
 #endif
 
 #ifdef POLOLU_ASTAR_ROBOT_CONTROLLER
-  #include <AStar32U4.h>
-  #include <Wire.h>
+  //#include <AStar32U4.h>
+  //#include <Wire.h>
 /*
   #include <AnalogScanner.h>
 */
-  #include "I2C.h"
+  #include "pI2C.h"
 
   // Fake pin numbers for A-Star-specific I/O features. These pins will
   // be emulated as digital or analog I/O pins in runCommand(), below.
@@ -162,12 +162,12 @@
 
   // A-Star Battery voltage as an analog input pin.
   #define ASTAR_BATTERY_PIN    106
-  
+
   // These objects provide access to the A-Star's on-board
   // buttons.
-  AStar32U4ButtonA buttonA;
-  AStar32U4ButtonB buttonB;
-  AStar32U4ButtonC buttonC;
+  //AStar32U4ButtonA buttonA;
+  //AStar32U4ButtonB buttonB;
+  //AStar32U4ButtonC buttonC;
 #endif
 
 /* Variable initialization */
@@ -240,27 +240,27 @@ int runCommand() {
     break;
   case ANALOG_WRITE:
     analogWrite(arg1, arg2);
-    SERIAL_STREAM.println("OK"); 
+    SERIAL_STREAM.println("OK");
     break;
   case DIGITAL_WRITE:
     #ifdef POLOLU_ASTAR_ROBOT_CONTROLLER
     if (arg1 == ASTAR_YELLOW_LED_PIN) {
       ledYellow(arg2);
-      SERIAL_STREAM.println("OK"); 
+      SERIAL_STREAM.println("OK");
       break;
     } else if (arg1 == ASTAR_GREEN_LED_PIN) {
       ledGreen(arg2);
-      SERIAL_STREAM.println("OK"); 
+      SERIAL_STREAM.println("OK");
       break;
     } else if (arg1 == ASTAR_RED_LED_PIN) {
       ledRed(arg2);
-      SERIAL_STREAM.println("OK"); 
+      SERIAL_STREAM.println("OK");
       break;
     }
     #endif
     if (arg2 == 0) digitalWrite(arg1, LOW);
     else if (arg2 == 1) digitalWrite(arg1, HIGH);
-    SERIAL_STREAM.println("OK"); 
+    SERIAL_STREAM.println("OK");
     break;
   case PIN_MODE:
     if (arg2 == 0) pinMode(arg1, INPUT);
@@ -301,7 +301,7 @@ int runCommand() {
     else moving = 1;
     leftPID.TargetTicksPerFrame = arg1;
     rightPID.TargetTicksPerFrame = arg2;
-    SERIAL_STREAM.println("OK"); 
+    SERIAL_STREAM.println("OK");
     break;
   case UPDATE_PID:
     while ((str = strtok_r(p, ":", &p)) != '\0') {
@@ -422,4 +422,3 @@ void loop() {
   }
 #endif
 }
-
