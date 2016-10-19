@@ -28,6 +28,9 @@ struct Data
   uint16_t batteryMillivolts;
   uint16_t analog[6];
 
+  // int8_t cmd;  // need command byte
+  // uint16_t Kp, Ki, Kd, Ko; // PID values
+
   bool playNotes;
   char notes[14];
 };
@@ -43,6 +46,11 @@ void initI2c() {
   // Set up the slave at I2C address 20.
   slave.init(20);
 
+  slave.buffer.Kp = Kp;
+  slave.buffer.Ki = Ki;
+  slave.buffer.Kd = Kd;
+  slave.buffer.Ko = Ko;
+  
   // Play startup sound.
   buzzer.play("v10>>g16>>>c16");
 }
@@ -57,8 +65,8 @@ void runI2c() {
   slave.buffer.buttonB = buttonB.isPressed();
   slave.buffer.buttonC = buttonC.isPressed();
 
-  // Change this to readBatteryMillivoltsLV() for the LV model.
-  slave.buffer.batteryMillivolts = readBatteryMillivoltsSV();
+  // Change this to readBatteryMillivoltsSV() for the SV model.
+  slave.buffer.batteryMillivolts = readBatteryMillivoltsLV();
 
   for(uint8_t i=0; i<6; i++)
   {
