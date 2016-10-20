@@ -6,6 +6,9 @@ class AStar(object):
   def __init__(self):
     self.bus = smbus.SMBus(1)
 
+  def close():
+    self.bus.close()
+
   def read_unpack(self, address, size, format):
     # Ideally we could do this:
     #    byte_list = self.bus.read_i2c_block_data(20, address, size)

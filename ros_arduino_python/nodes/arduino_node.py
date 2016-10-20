@@ -23,6 +23,7 @@ import rospy
 from ros_arduino_python.arduino_driver import Arduino
 from ros_arduino_python.arduino_serial import ArduinoSerial
 from ros_arduino_python.arduino_smbus import ArduinoSMBus
+from ros_arduino_python.arduino_a_starbus import ArduinoAStarBus
 from ros_arduino_python.arduino_sensors import *
 from ros_arduino_msgs.srv import *
 from ros_arduino_python.base_controller import BaseController
@@ -92,7 +93,8 @@ class ArduinoROS():
         if isinstance(self.port, basestring):
             self.controller = ArduinoSerial(self.port, self.baud, self.timeout)
         else:
-            self.controller = ArduinoSMBus(self.port)
+            #self.controller = ArduinoSMBus(self.port)
+            self.controller = ArduinoAStarBus(self.port)
 
         # Make the connection
         self.controller.connect()
@@ -119,7 +121,7 @@ class ArduinoROS():
                 params['frame']
             except:
                 params['frame'] = self.base_frame
-                
+
             if params['type'] == "Ping":
                 sensor = Ping(self.controller, name, params['pin'], params['rate'], params['frame'])
             elif params['type'] == "GP2D12":
