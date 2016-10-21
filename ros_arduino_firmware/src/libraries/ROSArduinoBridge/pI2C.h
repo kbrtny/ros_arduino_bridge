@@ -28,8 +28,9 @@ struct Data
   uint16_t batteryMillivolts;
   uint16_t analog[6];
 
-  // int8_t cmd;  // need command byte
-  // uint16_t Kp, Ki, Kd, Ko; // PID values
+  int8_t cmd;  // need command byte
+  int32_t leftEncoder, rightEncoder;
+  int16_t Kp, Ki, Kd, Ko; // PID values
 
   bool playNotes;
   char notes[14];
@@ -50,7 +51,7 @@ void initI2c() {
   slave.buffer.Ki = Ki;
   slave.buffer.Kd = Kd;
   slave.buffer.Ko = Ko;
-  
+
   // Play startup sound.
   buzzer.play("v10>>g16>>>c16");
 }

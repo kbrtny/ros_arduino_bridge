@@ -3,8 +3,8 @@ import smbus
 import struct
 
 class AStar(object):
-  def __init__(self):
-    self.bus = smbus.SMBus(1)
+  def __init__(self, port = 1):
+    self.bus = smbus.SMBus(port)
 
   def close():
     self.bus.close()
@@ -46,11 +46,18 @@ class AStar(object):
   def send_command(self,cmd):
     self.write_pack(24,'c',cmd)
 
+  # Add quadrature encoders
+  def get_encoder_counts(self):
+    return self.read_unpack(25, 8, "ll")
+
+  def reset_encoders(self):
+    self.write_pack(25, 'll', 0, 0)
+
   def update_pid(self, Kp, Kd, Ki, Ko):
-    self.write_pack(25,"HHHH",Kp, Kd, Ki, Ko)
+    self.write_pack(33,"hhhh", Kp, Kd, Ki, Ko)
 
   def play_notes(self, notes):
-    self.write_pack(33, 'B15s', 1, notes.encode("ascii"))
+    self.write_pack(41, 'B15s', 1, notes.encode("ascii"))
 
   def test_read8(self):
     self.read_unpack(0, 8, 'cccccccc')

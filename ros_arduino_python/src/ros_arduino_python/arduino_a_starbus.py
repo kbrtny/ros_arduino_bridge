@@ -34,20 +34,21 @@ from arduino_driver import Arduino
 # TODO: rename self.bus to self.a_starbus?
 # > use an a_star.py routine for every self.bus in this file.
 # > arduino_node.py now uses this file instead of arduino_smbus.py
+# > Still don't understand if cmd is used in I2C.h
 
 class ArduinoAStarBus(Arduino):
     def __init__(self, port = 1, device = 0x42):
         self.retry_count = 3
         self.port = port
         self.device = device
-        self.bus = None
+        self.a_star = None
         self.base_init()
 
     def connect(self):
-        if self.bus != None:
-            self.bus.close()
+        if self.a_star != None:
+            self.a_star.close()
 
-        self.bus = AStar() #SMBus(self.port)
+        self.a_star = AStar(self.port) #SMBus(self.port)
 
     def calculate_fletcher16(self, buff):
         s1 = 0
@@ -67,12 +68,12 @@ class ArduinoAStarBus(Arduino):
         if e.__class__.__name__ == "IOError":
             # print "handle_exeception?!"
             try:
-                self.bus.close()
+                self.a_star.close()
             except Exception as e1:
                 print "handle_exeception - close execption " + e1.__class__.__name__
                 pass
             try:
-                self.bus = SMBus(self.port)
+                self.a_star = AStar(self.port)
             except Exception as e2:
                 print "handle_exeception - open execption " + e2.__class__.__name__
                 pass
@@ -82,6 +83,10 @@ class ArduinoAStarBus(Arduino):
         '''
         # print "Updating PID parameters"
         self.mutex.acquire()
+
+        self.a_star.update_pid(Kp, Kd, Ki, Ko)
+
+        '''
         retry = self.retry_count
         while retry > 0:
             try:
@@ -114,6 +119,7 @@ class ArduinoAStarBus(Arduino):
                 self.handle_exeception(e)
                 retry -= 1
                 pass
+        '''
         self.mutex.release()
         return True
 
@@ -124,6 +130,10 @@ class ArduinoAStarBus(Arduino):
 
     def get_encoder_counts(self):
         self.mutex.acquire()
+
+        l_value, r_value = self.a_star.get_encoder_counts()
+
+        '''
         retry = self.retry_count * 2
         while retry > 0:
             try:
@@ -161,8 +171,6 @@ class ArduinoAStarBus(Arduino):
                 self.handle_exeception(e)
                 retry -= 1
                 pass
-        self.mutex.release()
-
         if retry == 0:
             raise ValueError('Could not get r_value_array')
 
@@ -171,6 +179,8 @@ class ArduinoAStarBus(Arduino):
 
         # if l_value != 0 or r_value != 0:
         #     print "get_encoder_counts --> %d:%d" % (l_value, r_value)
+        '''
+        self.mutex.release()
 
         return [ l_value, r_value ]
 
@@ -178,6 +188,10 @@ class ArduinoAStarBus(Arduino):
         ''' Reset the encoder counts to 0
         '''
         self.mutex.acquire()
+
+        self.a_star.reset_encoders()
+
+        '''
         retry = self.retry_count
         while retry > 0:
             try:
@@ -189,6 +203,7 @@ class ArduinoAStarBus(Arduino):
                 self.handle_exeception(e)
                 retry -= 1
                 pass
+        '''
         self.mutex.release()
         return True
 
@@ -196,6 +211,10 @@ class ArduinoAStarBus(Arduino):
         ''' Speeds are given in encoder ticks per PID interval
         '''
         # print "drive %d:%d" % (left, right)
+
+        self.a_star.motors(left, right)
+
+        '''
         self.mutex.acquire()
         retry = self.retry_count
         while retry > 0:
@@ -218,10 +237,15 @@ class ArduinoAStarBus(Arduino):
                 retry -= 1
                 pass
         self.mutex.release()
+        '''
         return True
 
     def analog_read(self, pin):
-        self.mutex.acquire()
+        #self.mutex.acquire()
+
+        return self.a_star.read_analog()
+
+        '''
         addr = 0x58 + (pin * 2)
         retry = self.retry_count
         while retry > 0:
@@ -248,6 +272,7 @@ class ArduinoAStarBus(Arduino):
         # print "analog_read(%d) -> %d" % (pin, value)
 
         return value
+        '''
 
     def  analog_write(self, pin, value):
         return True
