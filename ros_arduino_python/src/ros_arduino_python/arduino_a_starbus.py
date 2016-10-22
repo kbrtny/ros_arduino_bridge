@@ -323,7 +323,9 @@ if __name__ == "__main__":
     print "Sleeping for 1 second..."
     time.sleep(1)
 
-    print "Reading on analog port 0", myArduino.analog_read(0)
+    for i in range(10):
+	raw_input("Press enter to read analog pins...")
+        print i,"Reading on analog port 0", myArduino.analog_read(0)
     #print "Reading on digital port 0", myArduino.digital_read(0)
     print "Blinking the LED 3 times"
     for i in range(3):
@@ -332,6 +334,7 @@ if __name__ == "__main__":
         time.sleep(1.0)
         myArduino.a_star.leds(1,1,1)
         time.sleep(1.0)
+    myArduino.a_star.leds(0,0,0)
     #print "Current encoder counts", myArduino.encoders()
 
     print "Connection test successful.",
