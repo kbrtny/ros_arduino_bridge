@@ -31,10 +31,7 @@ import sys, traceback
 from a_star import AStar
 from arduino_driver import Arduino
 
-# TODO: rename self.bus to self.a_starbus?
-# > use an a_star.py routine for every self.bus in this file.
-# > arduino_node.py now uses this file instead of arduino_smbus.py
-# > Still don't understand if cmd is used in I2C.h
+# TODO:  Still don't understand if cmd is used in I2C.h
 
 class ArduinoAStarBus(Arduino):
     def __init__(self, port = 1, device = 0x42):
@@ -327,10 +324,13 @@ if __name__ == "__main__":
     time.sleep(1)
 
     print "Reading on analog port 0", myArduino.analog_read(0)
-    print "Reading on digital port 0", myArduino.digital_read(0)
+    #print "Reading on digital port 0", myArduino.digital_read(0)
     print "Blinking the LED 3 times"
     for i in range(3):
-        myArduino.digital_write(13, 1)
+        #myArduino.digital_write(13, 1)
+        myArduino.a_star.leds(0,0,0)
+        time.sleep(1.0)
+        myArduino.a_star.leds(1,1,1)
         time.sleep(1.0)
     #print "Current encoder counts", myArduino.encoders()
 
