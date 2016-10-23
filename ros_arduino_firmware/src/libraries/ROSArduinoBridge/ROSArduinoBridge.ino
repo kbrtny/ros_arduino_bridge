@@ -323,14 +323,16 @@ int runCommand() {
 
 /* Setup function--runs once at startup. */
 void setup() {
+  SERIAL_STREAM.begin(BAUDRATE);
+
 #ifdef USE_I2C
   initI2c();
-#endif
-
-  SERIAL_STREAM.begin(BAUDRATE);
+#else
+  // if not I2C, wait for serial to start
   while (!SERIAL_STREAM) {
     // do nothing
   }
+#endif
 
 // Initialize the motor controller if used */
 #ifdef USE_BASE
@@ -421,4 +423,5 @@ void loop() {
     servos[i].doSweep();
   }
 #endif
+
 }
