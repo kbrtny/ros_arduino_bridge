@@ -31,7 +31,7 @@ import sys, traceback
 from a_star import AStar
 from arduino_driver import Arduino
 
-# TODO:  Still don't understand if cmd is used in I2C.h
+# TODO:  implement cmd in I2C.h
 
 class ArduinoAStarBus(Arduino):
     def __init__(self, port = 1, device = 0x42):
