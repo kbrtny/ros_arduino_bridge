@@ -327,7 +327,7 @@ if __name__ == "__main__":
     myArduino.a_star.motors(300,0)
     time.sleep(1.0)
     print "Drive motor 2..."
-    myArduino.a_star.motors(0,300)
+    myArduino.a_star.motors(0,400)
     time.sleep(1.0)
     myArduino.a_star.motors(0,0)
 
