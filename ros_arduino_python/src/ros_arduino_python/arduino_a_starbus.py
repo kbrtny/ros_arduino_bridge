@@ -323,6 +323,14 @@ if __name__ == "__main__":
     print "Sleeping for 1 second..."
     time.sleep(1)
 
+    print "Drive motor 1..."
+    myArduino.a_star.motors(300,0)
+    time.sleep(1.0)
+    print "Drive motor 2..."
+    myArduino.a_star.motors(0,300)
+    time.sleep(1.0)
+    myArduino.a_star.motors(0,0)
+
     for i in range(10):
 	raw_input("Press enter to read analog pins...")
         print i,"Reading on analog port 0", myArduino.analog_read(0)
