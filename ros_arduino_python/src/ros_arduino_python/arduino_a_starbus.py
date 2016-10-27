@@ -324,11 +324,11 @@ if __name__ == "__main__":
     time.sleep(1)
 
     print "Drive motor 1..."
-    myArduino.a_star.motors(300,0)
-    time.sleep(1.0)
+    myArduino.a_star.motors(400,0)
+    time.sleep(2.0)
     print "Drive motor 2..."
     myArduino.a_star.motors(0,400)
-    time.sleep(1.0)
+    time.sleep(2.0)
     myArduino.a_star.motors(0,0)
 
     print "Encoder counts:",myArduino.a_star.get_encoder_counts()
@@ -337,9 +337,9 @@ if __name__ == "__main__":
 
     for i in range(10):
 	raw_input("Press enter to read analog pins...")
-        print i,"Reading on analog port 0", myArduino.analog_read(0),
-                                            myArduino.analog_read(1),
-                                            myArduino.analog_read(2),
+        print i,"Reading on analog ports 0,1,2:", myArduino.analog_read(0), \
+                                            myArduino.analog_read(1), \
+                                            myArduino.analog_read(2)
     #print "Reading on digital port 0", myArduino.digital_read(0)
     print "Blinking the LED 3 times"
     for i in range(3):
