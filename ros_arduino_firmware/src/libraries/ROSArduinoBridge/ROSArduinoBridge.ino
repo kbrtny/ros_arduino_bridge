@@ -65,7 +65,7 @@
 
    /* The A-Star 32U4 Robot Controller LV with Raspberry Pi Bridge */
    #define POLOLU_ASTAR_ROBOT_CONTROLLER
-   //#define USE_ENABLE_INTERRUPT
+   #define USE_ENABLE_INTERRUPT
 
    /* The RoboGaia encoder shield */
    //#define ROBOGAIA
