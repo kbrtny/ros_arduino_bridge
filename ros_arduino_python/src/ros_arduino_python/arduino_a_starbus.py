@@ -240,7 +240,7 @@ class ArduinoAStarBus(Arduino):
     def analog_read(self, pin):
         #self.mutex.acquire()
 
-        return self.a_star.read_analog()
+        return self.a_star.read_analog()[pin]
 
         '''
         addr = 0x58 + (pin * 2)
@@ -331,9 +331,15 @@ if __name__ == "__main__":
     time.sleep(1.0)
     myArduino.a_star.motors(0,0)
 
+    print "Encoder counts:",myArduino.a_star.get_encoder_counts()
+
+    print "Battery in millivolts:",myArduino.a_star.read_battery_millivolts()
+
     for i in range(10):
 	raw_input("Press enter to read analog pins...")
-        print i,"Reading on analog port 0", myArduino.analog_read(0)
+        print i,"Reading on analog port 0", myArduino.analog_read(0),
+                                            myArduino.analog_read(1),
+                                            myArduino.analog_read(2),
     #print "Reading on digital port 0", myArduino.digital_read(0)
     print "Blinking the LED 3 times"
     for i in range(3):

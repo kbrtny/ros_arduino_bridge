@@ -80,6 +80,9 @@ void runI2c() {
   ledRed(slave.buffer.red);
   motors.setSpeeds(slave.buffer.leftMotor, slave.buffer.rightMotor);
 
+  slave.buffer.leftEncoder  = readEncoder(LEFT)
+  slave.buffer.rightEncoder = readEncoder(RIGHT)
+
   // Playing music involves both reading and writing, since we only
   // want to do it once.
   if(slave.buffer.playNotes)
