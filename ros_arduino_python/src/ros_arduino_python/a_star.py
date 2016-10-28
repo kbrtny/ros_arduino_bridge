@@ -9,6 +9,29 @@ class AStar(object):
   def close():
     self.bus.close()
 
+  # Catch IO exception error:
+  def try_io(call, tries=10):
+    assert tries > 0
+    error = None
+    result = None
+
+    while tries:
+        try:
+            result = call()
+        except IOError as e:
+            print tries, error
+            from subprocess import call
+            call(["i2cdetect", "-y","1"])
+            error = e
+            tries -= 1
+        else:
+            break
+
+    if not tries:
+        raise error
+
+    return result
+
   def read_unpack(self, address, size, format):
     # Ideally we could do this:
     #    byte_list = self.bus.read_i2c_block_data(20, address, size)
@@ -17,15 +40,19 @@ class AStar(object):
     # condition, and the TWI module is disabled until the interrupt can
     # be processed.
 
+    try_io(lambda: self.bus.write_byte(20,address))
     self.bus.write_byte(20,address)
     byte_list = []
     for n in range(0,size):
-      byte_list.append(self.bus.read_byte(20))
+      #byte_list.append(self.bus.read_byte(20))
+      bl = try_io(self.bus.read_byte(20))
+      byte_list.append(bl)
     return struct.unpack(format,bytes(bytearray(byte_list)))
 
   def write_pack(self, address, format, *data):
     data_array = map(ord, list(struct.pack(format, *data)))
-    self.bus.write_i2c_block_data(20, address, data_array)
+    #self.bus.write_i2c_block_data(20, address, data_array)
+    try_io(self.bus.write_i2c_block_data(20, address, data_array))
 
   def leds(self, red, yellow, green):
     self.write_pack(0, 'BBB', red, yellow, green)
