@@ -10,14 +10,14 @@ class AStar(object):
     self.bus.close()
 
   # Catch IO exception error:
-  def try_io(call, tries=10):
+  def try_io(self, my_call, tries=10):
     assert tries > 0
     error = None
     result = None
 
     while tries:
         try:
-            result = call()
+            result = my_call()
         except IOError as e:
             print tries, error
             from subprocess import call
@@ -40,8 +40,8 @@ class AStar(object):
     # condition, and the TWI module is disabled until the interrupt can
     # be processed.
 
+    #self.bus.write_byte(20,address)
     self.try_io(lambda: self.bus.write_byte(20,address))
-    self.bus.write_byte(20,address)
     byte_list = []
     for n in range(0,size):
       #byte_list.append(self.bus.read_byte(20))
