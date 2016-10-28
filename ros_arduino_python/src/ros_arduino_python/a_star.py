@@ -10,8 +10,7 @@ class AStar(object):
     self.bus.close()
 
   # Catch IO exception error:
-  def try_io(call): #, tries=10):
-    tries = 5
+  def try_io(call, tries=10):
     assert tries > 0
     error = None
     result = None
@@ -46,14 +45,14 @@ class AStar(object):
     byte_list = []
     for n in range(0,size):
       #byte_list.append(self.bus.read_byte(20))
-      bl = self.try_io(self.bus.read_byte(20))
+      bl = self.try_io(lambda: self.bus.read_byte(20))
       byte_list.append(bl)
     return struct.unpack(format,bytes(bytearray(byte_list)))
 
   def write_pack(self, address, format, *data):
     data_array = map(ord, list(struct.pack(format, *data)))
     #self.bus.write_i2c_block_data(20, address, data_array)
-    self.try_io(self.bus.write_i2c_block_data(20, address, data_array))
+    self.try_io(lambda: self.bus.write_i2c_block_data(20, address, data_array))
 
   def leds(self, red, yellow, green):
     self.write_pack(0, 'BBB', red, yellow, green)
