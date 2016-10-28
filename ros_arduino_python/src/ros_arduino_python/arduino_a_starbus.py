@@ -209,7 +209,9 @@ class ArduinoAStarBus(Arduino):
         '''
         # print "drive %d:%d" % (left, right)
 
+        self.mutex.acquire()
         self.a_star.motors(left, right)
+        self.mutex.release()
 
         '''
         self.mutex.acquire()

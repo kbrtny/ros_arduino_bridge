@@ -10,7 +10,8 @@ class AStar(object):
     self.bus.close()
 
   # Catch IO exception error:
-  def try_io(call, tries=10):
+  def try_io(call): #, tries=10):
+    tries = 5
     assert tries > 0
     error = None
     result = None
