@@ -38,7 +38,7 @@ struct Data
 
 PololuRPiSlave<struct Data,0> slave;
 PololuBuzzer buzzer;
-AStar32U4Motors motors;
+//AStar32U4Motors motors;
 AStar32U4ButtonA buttonA;
 AStar32U4ButtonB buttonB;
 AStar32U4ButtonC buttonC;
@@ -46,6 +46,9 @@ AStar32U4ButtonC buttonC;
 void initI2c() {
   // Set up the slave at I2C address 20.
   slave.init(20);
+
+  slave.buffer.leftMotor = 0;
+  slave.buffer.rightMotor = 0;
 
   slave.buffer.Kp = Kp;
   slave.buffer.Ki = Ki;
@@ -78,8 +81,17 @@ void runI2c() {
   ledYellow(slave.buffer.yellow);
   ledGreen(slave.buffer.green);
   ledRed(slave.buffer.red);
-  motors.setSpeeds(slave.buffer.leftMotor, slave.buffer.rightMotor);
+  //motors.setSpeeds(slave.buffer.leftMotor, slave.buffer.rightMotor);
 
+  if (slave.buffer.leftMotor != 0 || slave.buffer.rightMotor != 0) {
+    moving = 1;
+    lastMotorCommand = millis();
+    leftPID.TargetTicksPerFrame = slave.buffer.leftMotor;
+    rightPID.TargetTicksPerFrame = slave.buffer.rightMotor;
+    slave.buffer.leftMotor  = 0;
+    slave.buffer.rightMotor = 0;
+  }
+  
   slave.buffer.leftEncoder  = readEncoder(LEFT);
   slave.buffer.rightEncoder = readEncoder(RIGHT);
 
