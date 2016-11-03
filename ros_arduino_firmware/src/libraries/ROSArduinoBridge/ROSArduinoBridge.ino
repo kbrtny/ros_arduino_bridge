@@ -406,6 +406,26 @@ void loop() {
 #ifdef USE_BASE
   if (millis() > nextPID) {
     updatePID();
+    /* for debugging:
+    if (moving != 0) {
+      SERIAL_STREAM.print("out = ");
+      SERIAL_STREAM.print(leftPID.output);
+      SERIAL_STREAM.print(" ");
+      SERIAL_STREAM.print(rightPID.output);
+      SERIAL_STREAM.print(" , lT= ");
+      SERIAL_STREAM.print(leftPID.TargetTicksPerFrame);
+      SERIAL_STREAM.print(" lE= ");
+      SERIAL_STREAM.print(leftPID.Encoder);
+      SERIAL_STREAM.print(" lpE= ");
+      SERIAL_STREAM.print(leftPID.PrevEnc);
+      SERIAL_STREAM.print(" || rT= ");
+      SERIAL_STREAM.print(rightPID.TargetTicksPerFrame);
+      SERIAL_STREAM.print(" rE= ");
+      SERIAL_STREAM.print(rightPID.Encoder);
+      SERIAL_STREAM.print(" rpE= ");
+      SERIAL_STREAM.println(rightPID.PrevEnc);
+    }
+    */
     nextPID += PID_INTERVAL;
   }
 

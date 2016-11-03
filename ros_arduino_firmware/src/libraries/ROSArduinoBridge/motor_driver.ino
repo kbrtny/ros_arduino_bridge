@@ -89,7 +89,7 @@
 
   void initMotorController() {
     // Uncomment to flip a motor's direction:
-    //drive.flipM1(true);
+    drive.flipM1(true);
     drive.flipM2(true);
   }
 
