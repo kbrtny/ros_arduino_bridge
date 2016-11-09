@@ -241,8 +241,10 @@ class ArduinoAStarBus(Arduino):
 
     def analog_read(self, pin):
         #self.mutex.acquire()
-
-        return self.a_star.read_analog()[pin]
+        if pin == 106:
+            return self.a_star.read_battery_millivolts()
+        else:
+            return self.a_star.read_analog()[pin]
 
         '''
         addr = 0x58 + (pin * 2)
@@ -277,6 +279,9 @@ class ArduinoAStarBus(Arduino):
         return True
 
     def digital_read(self, pin):
+        # A-star button pins a,b,c = 100,101,102:
+        if pin >= 100 and pin <= 102:
+            return self.a_star.read_buttons()[pin-100]
         return 0
 
     def digital_write(self, pin, value):

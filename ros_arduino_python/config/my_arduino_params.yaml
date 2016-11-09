@@ -52,5 +52,7 @@ sensors: {
 #  button_c:              {pin: 102, type: Digital, rate: 10},
   battery_voltage:       {pin: 106, type: Analog, rate: 1},
   arduino_led:           {pin: 13, type: Digital, rate: 10, direction: output},
+  # Examples from freeforum:
+  #motor_current_left:   {pin: 0, type: PololuMotorCurrent, rate: 5},
+  #motor_current_right:  {pin: 1, type: PololuMotorCurrent, rate: 5},
 }
-
