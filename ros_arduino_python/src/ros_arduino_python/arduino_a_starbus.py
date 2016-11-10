@@ -83,40 +83,6 @@ class ArduinoAStarBus(Arduino):
 
         self.a_star.update_pid(Kp, Kd, Ki, Ko)
 
-        '''
-        retry = self.retry_count
-        while retry > 0:
-            try:
-                Kp_value = ctypes.c_short(Kp).value
-                chk = ctypes.c_ushort(self.calculate_fletcher16([ self.device, 0x50, 4, Kp_value & 0xff, (Kp_value >> 8) & 0xff ])).value
-                # print "update_pid Kp chk= %x" % chk
-                self.bus.write_i2c_block_data(self.device, 0x50, [ 4, Kp_value & 0xff, (Kp_value >> 8) & 0xff, chk & 0xff, (chk >> 8) & 0xff ])
-
-                Kd_value = ctypes.c_short(Kd).value
-                chk = ctypes.c_ushort(self.calculate_fletcher16([ self.device, 0x54, 4, Kd_value & 0xff, (Kd_value >> 8) & 0xff ])).value
-                # print "update_pid Kd chk= %x" % chk
-                self.bus.write_i2c_block_data(self.device, 0x54, [ 4, Kd_value & 0xff, (Kd_value >> 8) & 0xff, chk & 0xff, (chk >> 8) & 0xff ])
-
-                Ki_value = ctypes.c_short(Ki).value
-                chk = ctypes.c_ushort(self.calculate_fletcher16([ self.device, 0x52, 4, Ki_value & 0xff, (Ki_value >> 8) & 0xff ])).value
-                # print "update_pid Ki chk= %x" % chk
-                self.bus.write_i2c_block_data(self.device, 0x52, [ 4, Ki_value & 0xff, (Ki_value >> 8) & 0xff, chk & 0xff, (chk >> 8) & 0xff ])
-
-                Ko_value = ctypes.c_short(Ko).value
-                chk = ctypes.c_ushort(self.calculate_fletcher16([ self.device, 0x56, 4, Ko_value & 0xff, (Ko_value >> 8) & 0xff ])).value
-                # print "update_pid Ko chk= %x" % chk
-                self.bus.write_i2c_block_data(self.device, 0x56, [ 4, Ko_value & 0xff, (Ko_value >> 8) & 0xff, chk & 0xff, (chk >> 8) & 0xff ])
-
-                chk = ctypes.c_ushort(self.calculate_fletcher16([ self.device, 0x40, 3, 0x75 ])).value
-                # print "update_pid cmd chk= %x" % chk
-                self.bus.write_i2c_block_data(self.device, 0x40, [ 3, 0x75, chk & 0xff, (chk >> 8) & 0xff ])
-                retry = 0
-            except Exception as e:
-                print "update_pid execption " + e.__class__.__name__
-                self.handle_exeception(e)
-                retry -= 1
-                pass
-        '''
         self.mutex.release()
         return True
 
@@ -130,53 +96,6 @@ class ArduinoAStarBus(Arduino):
 
         l_value, r_value = self.a_star.get_encoder_counts()
 
-        '''
-        retry = self.retry_count * 2
-        while retry > 0:
-            try:
-                l_value_array = self.bus.read_i2c_block_data(self.device, 0x44, 6)
-                chk = self.calculate_fletcher16([ self.device, 0x44, 6, l_value_array[0], l_value_array[1], l_value_array[2], l_value_array[3]])
-                chk_r = ctypes.c_ushort((l_value_array[5] << 8 | l_value_array[4])).value
-
-                if chk != chk_r:
-                    # print "get_encoder_counts chk= %x  chk_r= %x" % (chk, chk_r)
-                    raise ValueError('checksum error')
-                retry = -1
-            except Exception as e:
-                # print "test execption " + e.__class__.__name__
-                self.handle_exeception(e)
-                retry -= 1
-                pass
-        self.mutex.release()
-
-        if retry == 0:
-            raise ValueError('Could not get l_value_array')
-
-        self.mutex.acquire()
-        retry = self.retry_count * 2
-        while retry > 0:
-            try:
-                r_value_array = self.bus.read_i2c_block_data(self.device, 0x48, 6)
-                chk = self.calculate_fletcher16([ self.device, 0x48, 6, r_value_array[0], r_value_array[1], r_value_array[2], r_value_array[3]])
-                chk_r = ctypes.c_ushort((r_value_array[5] << 8 | r_value_array[4])).value
-                if chk != chk_r:
-                    # print "get_encoder_counts chk= %x  chk_r= %x" % (chk, chk_r)
-                    raise ValueError('checksum error')
-                retry = -1
-            except Exception as e:
-                # print "test execption " + e.__class__.__name__
-                self.handle_exeception(e)
-                retry -= 1
-                pass
-        if retry == 0:
-            raise ValueError('Could not get r_value_array')
-
-        l_value = ctypes.c_long(l_value_array[3] << 24 | l_value_array[2] << 16 | l_value_array[1] << 8 | l_value_array[0]).value
-        r_value = ctypes.c_long(r_value_array[3] << 24 | r_value_array[2] << 16 | r_value_array[1] << 8 | r_value_array[0]).value
-
-        # if l_value != 0 or r_value != 0:
-        #     print "get_encoder_counts --> %d:%d" % (l_value, r_value)
-        '''
         self.mutex.release()
 
         return [ l_value, r_value ]
@@ -188,19 +107,6 @@ class ArduinoAStarBus(Arduino):
 
         self.a_star.reset_encoders()
 
-        '''
-        retry = self.retry_count
-        while retry > 0:
-            try:
-                chk = ctypes.c_ushort(self.calculate_fletcher16([ self.device, 0x40, 3, 0x72 ])).value
-                self.bus.write_i2c_block_data(self.device, 0x40, [ 3, 0x72, chk & 0xff, (chk >> 8) & 0xff ])
-                retry = 0
-            except Exception as e:
-                # print "test execption " + e.__class__.__name__
-                self.handle_exeception(e)
-                retry -= 1
-                pass
-        '''
         self.mutex.release()
         return True
 
@@ -213,30 +119,6 @@ class ArduinoAStarBus(Arduino):
         self.a_star.motors(left, right)
         self.mutex.release()
 
-        '''
-        self.mutex.acquire()
-        retry = self.retry_count
-        while retry > 0:
-            r_value = ctypes.c_short(right).value
-            l_value = ctypes.c_short(left).value
-            # print "drive converted %d:%d" % (l_value, r_value)
-            try:
-                chk = ctypes.c_ushort(self.calculate_fletcher16([ self.device, 0x4c, 4, l_value & 0xff, (l_value >> 8) & 0xff ])).value
-                self.bus.write_i2c_block_data(self.device, 0x4c, [ 4, l_value & 0xff, (l_value >> 8) & 0xff, chk & 0xff, (chk >> 8) & 0xff ])
-
-                chk = ctypes.c_ushort(self.calculate_fletcher16([ self.device, 0x4e, 4, r_value & 0xff, (r_value >> 8) & 0xff ])).value
-                self.bus.write_i2c_block_data(self.device, 0x4e, [ 4, r_value & 0xff, (r_value >> 8) & 0xff, chk & 0xff, (chk >> 8) & 0xff ])
-
-                chk = ctypes.c_ushort(self.calculate_fletcher16([ self.device, 0x40, 3, 0x6d ])).value
-                self.bus.write_i2c_block_data(self.device, 0x40, [ 3, 0x6d, chk & 0xff, (chk >> 8) & 0xff ])
-                retry = 0
-            except Exception as e:
-                print "test execption " + e.__class__.__name__
-                self.handle_exeception(e)
-                retry -= 1
-                pass
-        self.mutex.release()
-        '''
         return True
 
     def analog_read(self, pin):
@@ -245,35 +127,6 @@ class ArduinoAStarBus(Arduino):
             return self.a_star.read_battery_millivolts()
         else:
             return self.a_star.read_analog()[pin]
-
-        '''
-        addr = 0x58 + (pin * 2)
-        retry = self.retry_count
-        while retry > 0:
-            try:
-                value_array = self.bus.read_i2c_block_data(self.device, addr, 4)
-                chk = self.calculate_fletcher16([ self.device, addr, 4, value_array[0], value_array[1]])
-                chk_r = ctypes.c_ushort((value_array[3] << 8 | value_array[2])).value
-
-                if chk != chk_r:
-                    # print "analog_read(%d) -> %x  chk= %x  chk_r= %x" % (pin, addr, chk, chk_r)
-                    raise ValueError('checksum error')
-                retry = -1
-            except Exception as e:
-                # print "test execption " + e.__class__.__name__
-                self.handle_exeception(e)
-                retry -= 1
-                pass
-        self.mutex.release()
-
-        if retry == 0:
-            raise ValueError('Could not get values')
-
-        value = ctypes.c_long(value_array[1] << 8 | value_array[0]).value
-        # print "analog_read(%d) -> %d" % (pin, value)
-
-        return value
-        '''
 
     def  analog_write(self, pin, value):
         return True
@@ -342,7 +195,7 @@ if __name__ == "__main__":
 
     print "Battery in millivolts:",myArduino.a_star.read_battery_millivolts()
 
-    for i in range(10):
+    for i in range(5):
 	raw_input("Press enter to read analog pins...")
         print i,"Reading on analog ports 0,1,2:", myArduino.analog_read(0), \
                                             myArduino.analog_read(1), \
