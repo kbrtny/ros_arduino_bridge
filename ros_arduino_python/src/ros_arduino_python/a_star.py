@@ -64,7 +64,7 @@ class AStar(object):
     self.write_pack(6, 'hh', left, right)
 
   def read_battery_millivolts(self):
-    return self.read_unpack(10, 2, "H")
+    return self.read_unpack(10, 2, "H")[0]
 
   def read_analog(self):
     return self.read_unpack(12, 12, "HHHHHH")
