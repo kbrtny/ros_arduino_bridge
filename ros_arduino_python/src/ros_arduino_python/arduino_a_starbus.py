@@ -138,6 +138,11 @@ class ArduinoAStarBus(Arduino):
         return 0
 
     def digital_write(self, pin, value):
+        if pin >= 103 and pin <= 105:
+            leds = [0,0,0]
+            leds[pin-103] = 1
+            self.mutex.acquire()
+            self.a_star.leds(*leds)
         return True
 
     def pin_mode(self, pin, mode):
