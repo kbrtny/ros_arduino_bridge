@@ -143,6 +143,7 @@ class ArduinoAStarBus(Arduino):
             leds[pin-103] = 1
             self.mutex.acquire()
             self.a_star.leds(*leds)
+            self.mutex.release()
         return True
 
     def pin_mode(self, pin, mode):
