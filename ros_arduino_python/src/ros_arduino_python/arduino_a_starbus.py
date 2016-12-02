@@ -139,8 +139,8 @@ class ArduinoAStarBus(Arduino):
 
     def digital_write(self, pin, value):
         if pin >= 103 and pin <= 105:
-            leds = [0,0,0]
-            leds[pin-103] = 1
+            leds = 3*[False]
+            leds[pin-103] = bool(value)
             self.mutex.acquire()
             self.a_star.leds(*leds)
             self.mutex.release()
