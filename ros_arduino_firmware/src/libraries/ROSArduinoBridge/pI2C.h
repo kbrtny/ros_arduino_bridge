@@ -32,6 +32,8 @@ struct Data
   int32_t leftEncoder, rightEncoder;
   int16_t Kp, Ki, Kd, Ko; // PID values
 
+  int16_t left_servo, right_servo;
+
   bool playNotes;
   char notes[14];
 };
@@ -91,9 +93,14 @@ void runI2c() {
     slave.buffer.leftMotor  = 0;
     slave.buffer.rightMotor = 0;
   }
-  
+
   slave.buffer.leftEncoder  = readEncoder(LEFT);
   slave.buffer.rightEncoder = readEncoder(RIGHT);
+
+#ifdef USE_SERVOS
+  servos[0].setTargetPosition(slave.buffer.left_servo);
+  servos[1].setTargetPosition(slave.buffer.right_servo);
+#endif
 
   // Playing music involves both reading and writing, since we only
   // want to do it once.
