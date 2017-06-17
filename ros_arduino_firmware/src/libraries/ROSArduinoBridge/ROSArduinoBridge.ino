@@ -90,7 +90,8 @@
 // calls them 6V motors, so Marco originally reduced the maximum PWM
 // based on using 7.4V batteries. But Ray looked up the motor specs and
 // found they are rated to 12V, so we'll use the maximum PWM available.
-#define MAX_PWM        400
+#define MAX_PWM        250 //  turn down for servos
+//#define MAX_PWM        400 
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
@@ -440,6 +441,12 @@ void loop() {
 #ifdef USE_SERVOS
   int i;
   for (i = 0; i < N_SERVOS; i++) {
+    /*
+    SERIAL_STREAM.print("servo ");
+    SERIAL_STREAM.print(i);
+    SERIAL_STREAM.print(" read = ");
+    SERIAL_STREAM.println(servos[arg1].getServo().read());
+    */
     servos[i].doSweep();
   }
 #endif
