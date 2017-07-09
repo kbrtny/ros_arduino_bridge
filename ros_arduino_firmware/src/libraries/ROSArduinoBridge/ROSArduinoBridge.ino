@@ -48,12 +48,14 @@
 #define USE_BASE      // Enable the base controller code
 //#undef USE_BASE     // Disable the base controller code
 
-#define USE_I2C
 #define SERIAL_STREAM Serial
 #define DEBUG_SERIAL_STREAM Serial
 
 /* Define the motor controller and encoder library you are using */
 #ifdef USE_BASE
+   /* use I2C interface to the Pi */
+   #define USE_I2C
+
    /* The Pololu VNH5019 dual motor driver shield */
    //#define POLOLU_VNH5019
 
@@ -90,8 +92,7 @@
 // calls them 6V motors, so Marco originally reduced the maximum PWM
 // based on using 7.4V batteries. But Ray looked up the motor specs and
 // found they are rated to 12V, so we'll use the maximum PWM available.
-#define MAX_PWM        250 //  turn down for servos
-//#define MAX_PWM        400 
+#define MAX_PWM        400 
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
@@ -111,7 +112,11 @@
 
 /* Include servo support if required */
 #ifdef USE_SERVOS
-   #include <Servo.h>
+   #ifdef POLOLU_ASTAR_ROBOT_CONTROLLER
+    #include "Servo.h"
+   #else
+    #include <Servo.h>
+   #endif
    #include "servos.h"
 #endif
 
@@ -146,8 +151,11 @@
 /*
   #include <AnalogScanner.h>
 */
-  #include "pI2C.h"
 
+  #ifdef USE_I2C
+  #include "pI2C.h"
+  #endif
+  
   // Fake pin numbers for A-Star-specific I/O features. These pins will
   // be emulated as digital or analog I/O pins in runCommand(), below.
 
@@ -216,7 +224,7 @@ int runCommand() {
     SERIAL_STREAM.println(BAUDRATE);
     break;
   case ANALOG_READ:
-    #ifdef POLOLU_ASTAR_ROBOT_CONTROLLER
+    #ifdef USE_I2C //POLOLU_ASTAR_ROBOT_CONTROLLER
     if (arg1 == ASTAR_BATTERY_PIN) {
       SERIAL_STREAM.println(readBatteryMillivoltsLV());
       break;
@@ -225,7 +233,7 @@ int runCommand() {
     SERIAL_STREAM.println(analogRead(arg1));
     break;
   case DIGITAL_READ:
-    #ifdef POLOLU_ASTAR_ROBOT_CONTROLLER
+    #ifdef USE_I2C //POLOLU_ASTAR_ROBOT_CONTROLLER
     if (arg1 == ASTAR_BTN_A_PIN) {
       SERIAL_STREAM.println(buttonA.isPressed());
       break;
@@ -244,7 +252,7 @@ int runCommand() {
     SERIAL_STREAM.println("OK");
     break;
   case DIGITAL_WRITE:
-    #ifdef POLOLU_ASTAR_ROBOT_CONTROLLER
+    #ifdef USE_I2C //POLOLU_ASTAR_ROBOT_CONTROLLER
     if (arg1 == ASTAR_YELLOW_LED_PIN) {
       ledYellow(arg2);
       SERIAL_STREAM.println("OK");
@@ -328,12 +336,17 @@ void setup() {
 
 #ifdef USE_I2C
   initI2c();
+  while(!SERIAL_STREAM) {
+    // do nothing
+  }
 #else
   // if not I2C, wait for serial to start
   while (!SERIAL_STREAM) {
     // do nothing
   }
 #endif
+
+SERIAL_STREAM.println("Ready!");
 
 // Initialize the motor controller if used */
 #ifdef USE_BASE
@@ -349,7 +362,7 @@ void setup() {
       servos[i].initServo(
           servoPins[i],
           stepDelay[i],
-          servoInitPosition[i]);
+          servoInitPosition[i]);          
     }
   #endif
 }
@@ -407,7 +420,7 @@ void loop() {
 #ifdef USE_BASE
   if (millis() > nextPID) {
     updatePID();
-    /* for debugging:
+    /*  for debugging:
     if (moving != 0) {
       SERIAL_STREAM.print("out = ");
       SERIAL_STREAM.print(leftPID.output);
@@ -426,7 +439,7 @@ void loop() {
       SERIAL_STREAM.print(" rpE= ");
       SERIAL_STREAM.println(rightPID.PrevEnc);
     }
-    */
+    */ 
     nextPID += PID_INTERVAL;
   }
 

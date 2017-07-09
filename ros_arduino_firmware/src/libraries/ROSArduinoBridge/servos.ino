@@ -31,6 +31,7 @@ void SweepServo::initServo(
   this->stepDelayMs = stepDelayMs;
   this->currentPositionDegrees = initPosition;
   this->targetPositionDegrees = initPosition;
+  this->servo.write(initPosition);
   this->lastSweepCommand = millis();
 }
 

@@ -15,7 +15,6 @@
  * 10/16/2016
  */
 
-#include <Servo.h>
 #include <AStar32U4.h>
 #include <PololuRPiSlave.h>
 
@@ -56,6 +55,9 @@ void initI2c() {
   slave.buffer.Ki = Ki;
   slave.buffer.Kd = Kd;
   slave.buffer.Ko = Ko;
+
+  slave.buffer.left_servo = -1;
+  slave.buffer.right_servo = -1;
 
   // Play startup sound.
   buzzer.play("v10>>g16>>>c16");
@@ -98,8 +100,12 @@ void runI2c() {
   slave.buffer.rightEncoder = readEncoder(RIGHT);
 
 #ifdef USE_SERVOS
-  servos[0].setTargetPosition(slave.buffer.left_servo);
-  servos[1].setTargetPosition(slave.buffer.right_servo);
+  if (slave.buffer.left_servo > -1 || slave.buffer.right_servo > -1) {
+    servos[0].setTargetPosition(slave.buffer.left_servo);
+    servos[1].setTargetPosition(slave.buffer.right_servo);
+    slave.buffer.left_servo = -1;
+    slave.buffer.right_servo = -1;
+  }
 #endif
 
   // Playing music involves both reading and writing, since we only
