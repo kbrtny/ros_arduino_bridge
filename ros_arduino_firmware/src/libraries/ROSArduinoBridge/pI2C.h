@@ -31,7 +31,8 @@ struct Data
   int32_t leftEncoder, rightEncoder;
   int16_t Kp, Ki, Kd, Ko; // PID values
 
-  int16_t left_servo, right_servo;
+  int8_t set_left_servo, set_right_servo;
+  int8_t get_left_servo, get_right_servo;
 
   bool playNotes;
   char notes[14];
@@ -100,12 +101,15 @@ void runI2c() {
   slave.buffer.rightEncoder = readEncoder(RIGHT);
 
 #ifdef USE_SERVOS
-  if (slave.buffer.left_servo > -1 || slave.buffer.right_servo > -1) {
-    servos[0].setTargetPosition(slave.buffer.left_servo);
-    servos[1].setTargetPosition(slave.buffer.right_servo);
-    slave.buffer.left_servo = -1;
-    slave.buffer.right_servo = -1;
+  // servo values vary from 0 to 180 degrees:
+  if (slave.buffer.set_left_servo < 181 || slave.buffer.set_right_servo < 181) {
+    servos[0].setTargetPosition(slave.buffer.set_left_servo);
+    servos[1].setTargetPosition(slave.buffer.set_right_servo);
+    slave.buffer.set_left_servo = 200;
+    slave.buffer.set_right_servo = 200;
   }
+  slave.buffer.get_left_servo = servos[0].currentPositionDegrees;
+  slave.buffer.get_right_servo = servos[1].currentPositionDegrees;
 #endif
 
   // Playing music involves both reading and writing, since we only

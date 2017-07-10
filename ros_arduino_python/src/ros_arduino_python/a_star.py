@@ -84,8 +84,11 @@ class AStar(object):
     self.write_pack(33,"hhhh", Kp, Kd, Ki, Ko)
 
   def write_servos(self, left_srv, right_srv):
-     self.write_pack(41, 'hh', left_srv, right_srv)
+     self.write_pack(41, 'cc', left_srv, right_srv)
 
+  def read_servos(self):
+    return self.read_unpack(43, 2, 'cc')
+     
   def play_notes(self, notes):
     self.write_pack(45, 'B15s', 1, notes.encode("ascii"))
 
