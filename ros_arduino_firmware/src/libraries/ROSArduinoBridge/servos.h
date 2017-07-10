@@ -16,7 +16,7 @@ int stepDelay [N_SERVOS] = { 10, 10 }; // ms
 byte servoPins [N_SERVOS] = { 1, 5}; //5 }; //5 }; //, 12};
 
 // Initial Position
-int /*byte*/ servoInitPosition [N_SERVOS] = { 90, 90}; // [0, 180] degrees
+uint8_t /*byte*/ servoInitPosition [N_SERVOS] = { 90, 90}; // [0, 180] degrees
 
 
 class SweepServo
@@ -28,13 +28,13 @@ class SweepServo
         int stepDelayMs,
         int initPosition);
     void doSweep();
-    void setTargetPosition(int position);
+    void setTargetPosition(uint8_t position);
     Servo getServo();
+    uint8_t currentPositionDegrees;
 
   private:
     Servo servo;
     int stepDelayMs;
-    int currentPositionDegrees;
     int targetPositionDegrees;
     long lastSweepCommand;
 };
