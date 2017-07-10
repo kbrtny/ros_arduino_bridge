@@ -63,7 +63,7 @@ void SweepServo::doSweep()
 
 
 // Set a new target position
-void SweepServo::setTargetPosition(int position)
+void SweepServo::setTargetPosition(uint8_t position)
 {
   this->targetPositionDegrees = position;
 }

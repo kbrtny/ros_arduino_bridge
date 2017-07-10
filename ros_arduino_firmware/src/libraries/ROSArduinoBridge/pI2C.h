@@ -31,8 +31,8 @@ struct Data
   int32_t leftEncoder, rightEncoder;
   int16_t Kp, Ki, Kd, Ko; // PID values
 
-  int8_t set_left_servo, set_right_servo;
-  int8_t get_left_servo, get_right_servo;
+  uint8_t set_left_servo, set_right_servo;
+  uint8_t get_left_servo, get_right_servo;
 
   bool playNotes;
   char notes[14];
@@ -57,8 +57,8 @@ void initI2c() {
   slave.buffer.Kd = Kd;
   slave.buffer.Ko = Ko;
 
-  slave.buffer.left_servo = -1;
-  slave.buffer.right_servo = -1;
+  slave.buffer.set_left_servo = 200;
+  slave.buffer.set_right_servo = 200;
 
   // Play startup sound.
   buzzer.play("v10>>g16>>>c16");
