@@ -221,13 +221,13 @@ if __name__ == "__main__":
     left_srv, rght_srv = myArduino.a_star.read_servos()
     print "Servos: left = ", left_srv, " right = ", rght_srv
     myArduino.a_star.write_servos(120, 60);
-    time.sleep(0.2);
+    time.sleep(1.0);
 
     left_srv, rght_srv = myArduino.a_star.read_servos()
     print "Servos: left = ", left_srv, " right = ", rght_srv
     
     myArduino.a_star.write_servos(150, 30);
-    time.sleep(0.2);
+    time.sleep(1.0);
 
     left_srv, rght_srv = myArduino.a_star.read_servos()
     print "Servos: left = ", left_srv, " right = ", rght_srv
