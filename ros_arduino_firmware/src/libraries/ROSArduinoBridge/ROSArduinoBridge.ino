@@ -336,9 +336,11 @@ void setup() {
 
 #ifdef USE_I2C
   initI2c();
+  /* for debugging w/ cmd, doesn't work w/ Pi
   while(!SERIAL_STREAM) {
     // do nothing
   }
+  */
 #else
   // if not I2C, wait for serial to start
   while (!SERIAL_STREAM) {

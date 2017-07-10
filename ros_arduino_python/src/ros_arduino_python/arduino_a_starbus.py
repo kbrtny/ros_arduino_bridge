@@ -217,6 +217,11 @@ if __name__ == "__main__":
     myArduino.a_star.leds(0,0,0)
     #print "Current encoder counts", myArduino.encoders()
 
+    print "Move servoes:"
+    myArduino.a_star.write_servos(120, 60);
+    time.sleep(0.1);
+    myArduino.a_star.write_servos(150, 30);
+    
     print "Connection test successful.",
 
     print "Shutting down Arduino."
