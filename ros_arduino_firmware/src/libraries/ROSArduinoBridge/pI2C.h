@@ -102,12 +102,14 @@ void runI2c() {
 
 #ifdef USE_SERVOS
   // servo values vary from 0 to 180 degrees:
-  if (slave.buffer.set_left_servo < 181 || slave.buffer.set_right_servo < 181) {
+  if (slave.buffer.set_left_servo < 181) {
     servos[0].setTargetPosition(slave.buffer.set_left_servo);
-    servos[1].setTargetPosition(slave.buffer.set_right_servo);
     slave.buffer.set_left_servo = 200;
-    slave.buffer.set_right_servo = 200;
   }
+  if (slave.buffer.set_right_servo < 181) {
+    servos[1].setTargetPosition(slave.buffer.set_right_servo);
+    slave.buffer.set_right_servo = 200;
+  }  
   slave.buffer.get_left_servo = servos[0].currentPositionDegrees;
   slave.buffer.get_right_servo = servos[1].currentPositionDegrees;
 #endif

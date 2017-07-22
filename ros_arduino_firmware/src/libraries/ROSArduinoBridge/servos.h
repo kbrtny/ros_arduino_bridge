@@ -13,7 +13,7 @@
 int stepDelay [N_SERVOS] = { 10, 10 }; // ms
 
 // Pins
-byte servoPins [N_SERVOS] = { 1, 5}; //5 }; //5 }; //, 12};
+byte servoPins [N_SERVOS] = { 4, 5}; //{1, 5};
 
 // Initial Position
 uint8_t /*byte*/ servoInitPosition [N_SERVOS] = { 90, 90}; // [0, 180] degrees
