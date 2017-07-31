@@ -224,7 +224,7 @@ int runCommand() {
     SERIAL_STREAM.println(BAUDRATE);
     break;
   case ANALOG_READ:
-    #ifdef USE_I2C //POLOLU_ASTAR_ROBOT_CONTROLLER
+    #ifdef defined(USE_I2C) && defined(POLOLU_ASTAR_ROBOT_CONTROLLER)
     if (arg1 == ASTAR_BATTERY_PIN) {
       SERIAL_STREAM.println(readBatteryMillivoltsLV());
       break;
@@ -233,7 +233,7 @@ int runCommand() {
     SERIAL_STREAM.println(analogRead(arg1));
     break;
   case DIGITAL_READ:
-    #ifdef USE_I2C //POLOLU_ASTAR_ROBOT_CONTROLLER
+    #ifdef defined(USE_I2C) && defined(POLOLU_ASTAR_ROBOT_CONTROLLER)
     if (arg1 == ASTAR_BTN_A_PIN) {
       SERIAL_STREAM.println(buttonA.isPressed());
       break;
@@ -252,7 +252,7 @@ int runCommand() {
     SERIAL_STREAM.println("OK");
     break;
   case DIGITAL_WRITE:
-    #ifdef USE_I2C //POLOLU_ASTAR_ROBOT_CONTROLLER
+    #ifdef defined(USE_I2C) && defined(POLOLU_ASTAR_ROBOT_CONTROLLER)
     if (arg1 == ASTAR_YELLOW_LED_PIN) {
       ledYellow(arg2);
       SERIAL_STREAM.println("OK");
@@ -336,11 +336,6 @@ void setup() {
 
 #ifdef USE_I2C
   initI2c();
-  /* for debugging w/ cmd, doesn't work w/ Pi
-  while(!SERIAL_STREAM) {
-    // do nothing
-  }
-  */
 #else
   // if not I2C, wait for serial to start
   while (!SERIAL_STREAM) {
@@ -348,7 +343,7 @@ void setup() {
   }
 #endif
 
-SERIAL_STREAM.println("Ready!");
+  SERIAL_STREAM.println("Ready!");
 
 // Initialize the motor controller if used */
 #ifdef USE_BASE
@@ -364,7 +359,7 @@ SERIAL_STREAM.println("Ready!");
       servos[i].initServo(
           servoPins[i],
           stepDelay[i],
-          servoInitPosition[i]);          
+          servoInitPosition[i]);
     }
   #endif
 }
@@ -422,7 +417,7 @@ void loop() {
 #ifdef USE_BASE
   if (millis() > nextPID) {
     updatePID();
-    /*  for debugging:
+    /* for debugging:
     if (moving != 0) {
       SERIAL_STREAM.print("out = ");
       SERIAL_STREAM.print(leftPID.output);
@@ -441,7 +436,7 @@ void loop() {
       SERIAL_STREAM.print(" rpE= ");
       SERIAL_STREAM.println(rightPID.PrevEnc);
     }
-    */ 
+    */
     nextPID += PID_INTERVAL;
   }
 
