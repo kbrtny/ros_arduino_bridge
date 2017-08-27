@@ -24,6 +24,7 @@ from ros_arduino_python.arduino_driver import Arduino
 from ros_arduino_python.arduino_serial import ArduinoSerial
 from ros_arduino_python.arduino_smbus import ArduinoSMBus
 from ros_arduino_python.arduino_a_starbus import ArduinoAStarBus
+from ros_arduino_python.arduino_simulate import ArduinoSimBus
 from ros_arduino_python.arduino_sensors import *
 from ros_arduino_msgs.srv import *
 from ros_arduino_python.base_controller import BaseController
@@ -92,9 +93,11 @@ class ArduinoROS():
         # Initialize the controlller
         if isinstance(self.port, basestring):
             self.controller = ArduinoSerial(self.port, self.baud, self.timeout)
-        else:
+        elif self.port > 0:
             #self.controller = ArduinoSMBus(self.port)
             self.controller = ArduinoAStarBus(self.port)
+        else:
+            self.controller = ArduinoSimBus(self.port)
 
         # Make the connection
         self.controller.connect()
