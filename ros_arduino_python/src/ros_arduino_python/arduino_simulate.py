@@ -146,7 +146,7 @@ class ArduinoSimBus(Arduino):
     def analog_read(self, pin):
         #self.mutex.acquire()
         if pin == 106:
-            return 1000000
+            return 10000
             #return self.a_star.read_battery_millivolts()
         else:
             # simulated sensor:
