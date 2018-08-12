@@ -94,6 +94,39 @@
       return;
     }
   }
+#elif defined POLOLU_ROMI_ROBOT_CONTROLLER
+  #include <Romi32U4.h>
+  Romi32U4Encoders encoders;
+
+  int16_t initialleft = 0;
+  int16_t initialright = 0;
+  
+  void initEncoder(void) {
+    initialleft = encoders.getCountsLeft();
+    initialright = encoders.getCountsRight();
+    }
+
+  long readEncoder(int i) {
+    if (i == LEFT) {
+      return (long)(encoders.getCountsLeft()-initialleft);
+    }
+    else if (i == RIGHT) {
+      return (long)(encoders.getCountsRight()-initialright);
+    }
+
+    return 0;
+  }
+
+  /* Wrap the encoder reset function */
+  void resetEncoder(int i) {
+    if (i == LEFT) {
+      initialleft = encoders.getCountsLeft();
+    }
+    else if (i == RIGHT) {
+      initialright = encoders.getCountsRight();
+    }
+  }
+  
 #elif defined POLOLU_ASTAR_ROBOT_CONTROLLER
   #include <AStar32U4.h>
   #ifdef USE_ENABLE_INTERRUPT
@@ -115,7 +148,7 @@
    /* Interrupt routine for LEFT encoder, taking care of actual counting */
   ISR(PCINT0_vect) {
     static uint8_t enc_last = 0;
-    bool b = FastGPIO::Pin<LEFT_ENC_PIN_B>::isInputHigh();
+    bool b = FastGPIO::Pin<LEFT_ENC  _PIN_B>::isInputHigh();
     bool a = FastGPIO::Pin<LEFT_ENC_PIN_XOR>::isInputHigh() ^ b;
 
     enc_last <<= 2;
@@ -164,7 +197,7 @@
 #endif //USE_ENABLE_INTERRUPT
   
   void initEncoder() {
-    #ifndef USE_ENABLE_INTERRUPT
+    #ifndef USE_  ENABLE_INTERRUPT
       FastGPIO::Pin<LEFT_ENC_PIN_XOR>::setInputPulledUp();
       FastGPIO::Pin<LEFT_ENC_PIN_B>::setInputPulledUp();
       FastGPIO::Pin<RIGHT_ENC_PIN_XOR>::setInputPulledUp();

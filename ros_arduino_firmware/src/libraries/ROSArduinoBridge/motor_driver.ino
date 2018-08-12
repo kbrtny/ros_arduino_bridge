@@ -107,6 +107,28 @@
     setMotorSpeed(LEFT, leftSpeed);
     setMotorSpeed(RIGHT, rightSpeed);
   }
+#elif defined POLOLU_ROMI_ROBOT_CONTROLLER
+  #include  <Romi32U4.h>
+
+  Romi32U4Motors motors;
+
+  void initMotorController() {
+
+  }
+
+  void setMotorSpeed(int i, int spd) {
+#if defined SPARKFUN_REDBOT_ENCODER
+    setDir(i, (spd < 0) ? -1 : 1);
+#endif
+
+    if (i == LEFT) motors.setLeftSpeed(spd);
+    else motors.setRightSpeed(spd);
+  }
+
+  // A convenience function for setting both motor speeds
+  void setMotorSpeeds(int leftSpeed, int rightSpeed) {
+    motors.setSpeeds(leftSpeed,rightSpeed);
+  }
 #else
   #error A motor driver must be selected!
 #endif

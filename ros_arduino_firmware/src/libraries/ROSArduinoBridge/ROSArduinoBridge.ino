@@ -45,7 +45,7 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-#define USE_BASE      // Enable the base controller code
+#define USE_BASE  // Enable the base controller code
 //#undef USE_BASE     // Disable the base controller code
 
 #define SERIAL_STREAM Serial
@@ -66,9 +66,11 @@
    // #define POLOLU_DRV8835
 
    /* The A-Star 32U4 Robot Controller LV with Raspberry Pi Bridge */
-   #define POLOLU_ASTAR_ROBOT_CONTROLLER
-   #define USE_ENABLE_INTERRUPT
+   //#define POLOLU_ASTAR_ROBOT_CONTROLLER
+   //#define USE_ENABLE_INTERRUPT
 
+   /* The Romi 32U4 Robot Controller (based on AStar) */
+   #define POLOLU_ROMI_ROBOT_CONTROLLER
    /* The RoboGaia encoder shield */
    //#define ROBOGAIA
 
@@ -79,8 +81,8 @@
    // #define SPARKFUN_REDBOT_ENCODER
 #endif
 
-#define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
-//#undef USE_SERVOS     // Disable use of PWM servos
+//#define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
+#undef USE_SERVOS     // Disable use of PWM servos
 
 /* Serial port baud rate */
 #define BAUDRATE     115200
@@ -112,12 +114,11 @@
 
 /* Include servo support if required */
 #ifdef USE_SERVOS
-   #ifdef POLOLU_ASTAR_ROBOT_CONTROLLER
+   #if defined(POLOLU_ASTAR_ROBOT_CONTROLLER) || defined(POLOLU_ROMI_ROBOT_CONTROLLER)
     #include "Servo.h"
    #else
     #include <Servo.h>
    #endif
-   #include "servos.h"
 #endif
 
 #ifdef USE_BASE
@@ -179,6 +180,34 @@
   //AStar32U4ButtonC buttonC;
 #endif
 
+#ifdef POLOLU_ROMI_ROBOT_CONTROLLER
+  #ifdef USE_I2C
+  #include "pI2C.h"
+  #endif
+  
+  // Fake pin numbers for A-Star-specific I/O features. These pins will
+  // be emulated as digital or analog I/O pins in runCommand(), below.
+
+  // A-Star buttons as digital input pins.
+  #define ROMI_BTN_A_PIN      100
+  #define ROMI_BTN_B_PIN      101
+  #define ROMI_BTN_C_PIN      102
+
+  // A-Star LEDs as digital output pins.
+  #define ROMI_YELLOW_LED_PIN 103
+  #define ROMI_GREEN_LED_PIN  104
+  #define ROMI_RED_LED_PIN    105
+
+  // A-Star Battery voltage as an analog input pin.
+  #define ROMI_BATTERY_PIN    106
+
+  // These objects provide access to the A-Star's on-board
+  // buttons.
+  //Romi32U4ButtonA buttonA;
+  //Romi32U4ButtonB buttonB;
+  //Romi32U4ButtonC buttonC;
+#endif
+  
 /* Variable initialization */
 
 // A pair of varibles to help parse serial commands (thanks Fergs)
@@ -230,20 +259,39 @@ int runCommand() {
       break;
     }
     #endif
+    #ifdef defined(USE_I2C) && defined(POLOLU_ROMI_ROBOT_CONTROLLER)
+    if (arg1 == ROMI_BATTERY_PIN) {
+      SERIAL_STREAM.println(readBatteryMillivolts());
+      break;
+    }
+    #endif
     SERIAL_STREAM.println(analogRead(arg1));
     break;
   case DIGITAL_READ:
-    #ifdef defined(USE_I2C) && defined(POLOLU_ASTAR_ROBOT_CONTROLLER)
-    if (arg1 == ASTAR_BTN_A_PIN) {
-      SERIAL_STREAM.println(buttonA.isPressed());
-      break;
-    } else if (arg1 == ASTAR_BTN_B_PIN) {
-      SERIAL_STREAM.println(buttonB.isPressed());
-      break;
-    } else if (arg1 == ASTAR_BTN_C_PIN) {
-      SERIAL_STREAM.println(buttonC.isPressed());
-      break;
-    }
+    #if defined(USE_I2C) 
+      #if defined(POLOLU_ASTAR_ROBOT_CONTROLLER)
+      if (arg1 == ASTAR_BTN_A_PIN) {
+        SERIAL_STREAM.println(buttonA.isPressed());
+        break;
+      } else if (arg1 == ASTAR_BTN_B_PIN) {
+        SERIAL_STREAM.println(buttonB.isPressed());
+        break;
+      } else if (arg1 == ASTAR_BTN_C_PIN) {
+        SERIAL_STREAM.println(buttonC.isPressed());
+        break;
+      }
+      #elif defined(POLOLU_ROMI_ROBOT_CONTROLLER)
+      if (arg1 == ROMI_BTN_A_PIN) {
+        SERIAL_STREAM.println(buttonA.isPressed());
+        break;
+      } else if (arg1 == ROMI_BTN_B_PIN) {
+        SERIAL_STREAM.println(buttonB.isPressed());
+        break;
+      } else if (arg1 == ROMI_BTN_C_PIN) {
+        SERIAL_STREAM.println(buttonC.isPressed());
+        break;
+      }
+      #endif
     #endif
     SERIAL_STREAM.println(digitalRead(arg1));
     break;
@@ -252,20 +300,36 @@ int runCommand() {
     SERIAL_STREAM.println("OK");
     break;
   case DIGITAL_WRITE:
-    #ifdef defined(USE_I2C) && defined(POLOLU_ASTAR_ROBOT_CONTROLLER)
-    if (arg1 == ASTAR_YELLOW_LED_PIN) {
-      ledYellow(arg2);
-      SERIAL_STREAM.println("OK");
-      break;
-    } else if (arg1 == ASTAR_GREEN_LED_PIN) {
-      ledGreen(arg2);
-      SERIAL_STREAM.println("OK");
-      break;
-    } else if (arg1 == ASTAR_RED_LED_PIN) {
-      ledRed(arg2);
-      SERIAL_STREAM.println("OK");
-      break;
-    }
+    #if defined(USE_I2C)
+      #if defined(POLOLU_ASTAR_ROBOT_CONTROLLER)
+      if (arg1 == ASTAR_YELLOW_LED_PIN) {
+        ledYellow(arg2);
+        SERIAL_STREAM.println("OK");
+        break;
+      } else if (arg1 == ASTAR_GREEN_LED_PIN) {
+        ledGreen(arg2);
+        SERIAL_STREAM.println("OK");
+        break;
+      } else if (arg1 == ASTAR_RED_LED_PIN) {
+        ledRed(arg2);
+        SERIAL_STREAM.println("OK");
+        break;
+      }
+      #elif defined(POLOLU_ROMI_ROBOT_CONTROLLER)
+      if (arg1 == ROMI_YELLOW_LED_PIN) {
+        ledYellow(arg2);
+        SERIAL_STREAM.println("OK");
+        break;
+      } else if (arg1 == ROMI_GREEN_LED_PIN) {
+        ledGreen(arg2);
+        SERIAL_STREAM.println("OK");
+        break;
+      } else if (arg1 == ROMI_RED_LED_PIN) {
+        ledRed(arg2);
+        SERIAL_STREAM.println("OK");
+        break;
+      }
+      #endif
     #endif
     if (arg2 == 0) digitalWrite(arg1, LOW);
     else if (arg2 == 1) digitalWrite(arg1, HIGH);

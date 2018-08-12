@@ -14,8 +14,11 @@
  * Jay Salmonson
  * 10/16/2016
  */
-
-#include <AStar32U4.h>
+#ifdef POLOLU_ASTAR_ROBOT_CONTROLLER
+  #include <AStar32U4.h>
+#elif defined(POLOLU_ROMI_ROBOT_CONTROLLER)
+  #include <Romi32U4.h>
+#endif
 #include <PololuRPiSlave.h>
 
 struct Data
@@ -41,9 +44,16 @@ struct Data
 PololuRPiSlave<struct Data,0> slave;
 PololuBuzzer buzzer;
 //AStar32U4Motors motors;
-AStar32U4ButtonA buttonA;
-AStar32U4ButtonB buttonB;
-AStar32U4ButtonC buttonC;
+#ifdef POLOLU_ASTAR_ROBOT_CONTROLLER
+  AStar32U4ButtonA buttonA;
+  AStar32U4ButtonB buttonB;
+  AStar32U4ButtonC buttonC;
+#elif defined(POLOLU_ROMI_ROBOT_CONTROLLER)
+  Romi32U4ButtonA buttonA;
+  Romi32U4ButtonB buttonB;
+  Romi32U4ButtonC buttonC;
+#endif
+
 
 void initI2c() {
   // Set up the slave at I2C address 20.
@@ -75,7 +85,12 @@ void runI2c() {
   slave.buffer.buttonC = buttonC.isPressed();
 
   // Change this to readBatteryMillivoltsSV() for the SV model.
-  slave.buffer.batteryMillivolts = readBatteryMillivoltsLV();
+  #ifdef POLOLU_ASTAR_ROBOT_CONTROLLER
+    slave.buffer.batteryMillivolts = readBatteryMillivoltsLV();
+  #elif defined(POLOLU_ROMI_ROBOT_CONTROLLER)
+    slave.buffer.batteryMillivolts = readBatteryMillivolts();
+  #endif
+  
 
   for(uint8_t i=0; i<6; i++)
   {

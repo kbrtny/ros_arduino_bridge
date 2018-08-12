@@ -7,7 +7,7 @@
 
 /* PID setpoint info For a Motor */
 typedef struct {
-  double TargetTicksPerFrame;    // target speed in ticks per frame
+  double TargetTicksPerFrame;    // target speed in ticks per frameA
   long Encoder;                  // encoder count
   long PrevEnc;                  // last encoder count
 
@@ -125,6 +125,7 @@ void updatePID() {
   doPID(&leftPID);
 
   /* Set the motor speeds accordingly */
-  setMotorSpeeds(leftPID.output, rightPID.output);
+    setMotorSpeeds(leftPID.output, rightPID.output);
+  
 }
 
