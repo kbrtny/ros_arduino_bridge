@@ -1,31 +1,36 @@
 # Copyright Pololu Corporation.  For more information, see https://www.pololu.com/
 import smbus
 import struct
+from threading import Lock
+
 
 class AStar(object):
   def __init__(self, port = 1):
     self.bus = smbus.SMBus(port)
+    self.mutex = Lock()
 
   def close():
     self.bus.close()
 
   # Catch IO exception error:
-  def try_io(self, my_call, tries=10):
+  def try_io(self, my_call, tries=20):
     assert tries > 0
     error = None
     result = None
 
+    self.mutex.acquire()
     while tries:
         try:
             result = my_call()
         except IOError as e:
-            print tries, error
-            from subprocess import call
-            call(["i2cdetect", "-y","1"])
+            #print tries, error
+            #from subprocess import call
+            #call(["i2cdetect", "-y","1"])
             error = e
             tries -= 1
         else:
             break
+    self.mutex.release()
 
     if not tries:
         raise error

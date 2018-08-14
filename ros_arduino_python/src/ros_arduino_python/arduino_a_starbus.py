@@ -21,7 +21,7 @@
 
 """
 
-import thread
+#import thread
 from math import pi as PI, degrees, radians
 import ctypes
 import os
@@ -79,11 +79,11 @@ class ArduinoAStarBus(Arduino):
         ''' Set the PID parameters on the Arduino
         '''
         # print "Updating PID parameters"
-        self.mutex.acquire()
+        #self.mutex.acquire()
 
         self.a_star.update_pid(Kp, Kd, Ki, Ko)
 
-        self.mutex.release()
+        #self.mutex.release()
         return True
 
     def get_baud(self):
@@ -92,22 +92,22 @@ class ArduinoAStarBus(Arduino):
         return 0;
 
     def get_encoder_counts(self):
-        self.mutex.acquire()
+        #self.mutex.acquire()
 
         l_value, r_value = self.a_star.get_encoder_counts()
 
-        self.mutex.release()
+        #self.mutex.release()
 
         return [ l_value, r_value ]
 
     def reset_encoders(self):
         ''' Reset the encoder counts to 0
         '''
-        self.mutex.acquire()
+        #self.mutex.acquire()
 
         self.a_star.reset_encoders()
 
-        self.mutex.release()
+        #self.mutex.release()
         return True
 
     def drive(self, left, right):
@@ -115,9 +115,9 @@ class ArduinoAStarBus(Arduino):
         '''
         # print "drive %d:%d" % (left, right)
 
-        self.mutex.acquire()
+        #self.mutex.acquire()
         self.a_star.motors(left, right)
-        self.mutex.release()
+        #self.mutex.release()
 
         return True
 
@@ -141,9 +141,9 @@ class ArduinoAStarBus(Arduino):
         if pin >= 103 and pin <= 105:
             leds = 3*[False]
             leds[pin-103] = bool(value)
-            self.mutex.acquire()
+            #self.mutex.acquire()
             self.a_star.leds(*leds)
-            self.mutex.release()
+            #self.mutex.release()
         return True
 
     def pin_mode(self, pin, mode):
@@ -154,13 +154,13 @@ class ArduinoAStarBus(Arduino):
             Position in degrees (integer between 0 & 180)
         '''
         if id == 0:
-            self.mutex.acquire()
+            #self.mutex.acquire()
             self.a_star.write_servo_left(pos)
-            self.mutex.release()
+            #self.mutex.release()
         elif id == 1:
-            self.mutex.acquire()
+            #self.mutex.acquire()
             self.a_star.write_servo_right(pos)
-            self.mutex.release()
+            #self.mutex.release()
         return True
 
     def servo_read(self, id):
@@ -228,19 +228,19 @@ if __name__ == "__main__":
     #print "Current encoder counts", myArduino.encoders()
 
     print "Move servoes:"
-    left_srv, rght_srv = myArduino.a_star.read_servos()
-    print "Servos: left = ", left_srv, " right = ", rght_srv
-    myArduino.a_star.write_servos(120, 60);
+    #left_srv, rght_srv = myArduino.a_star.read_servos()
+    #print "Servos: left = ", left_srv, " right = ", rght_srv
+    #myArduino.a_star.write_servos(120, 60);
     time.sleep(1.0);
 
-    left_srv, rght_srv = myArduino.a_star.read_servos()
-    print "Servos: left = ", left_srv, " right = ", rght_srv
+    #left_srv, rght_srv = myArduino.a_star.read_servos()
+    #print "Servos: left = ", left_srv, " right = ", rght_srv
 
-    myArduino.a_star.write_servos(150, 30);
+    #myArduino.a_star.write_servos(150, 30);
     time.sleep(1.0);
 
-    left_srv, rght_srv = myArduino.a_star.read_servos()
-    print "Servos: left = ", left_srv, " right = ", rght_srv
+    #left_srv, rght_srv = myArduino.a_star.read_servos()
+    #print "Servos: left = ", left_srv, " right = ", rght_srv
 
     print "Connection test successful.",
 

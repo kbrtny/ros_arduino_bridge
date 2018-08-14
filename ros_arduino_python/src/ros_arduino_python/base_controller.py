@@ -213,7 +213,7 @@ class BaseController:
             # Set motor speeds in encoder ticks per PID loop
             if not self.stopped:
                 self.arduino.drive(self.v_left, self.v_right)
-                
+                #rospy.loginfo("Driving: " + str(self.v_left) + ", " + str(self.v_right)) 
             self.t_next = now + self.t_delta
             
     def stop(self):

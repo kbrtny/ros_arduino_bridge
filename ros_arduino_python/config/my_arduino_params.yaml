@@ -3,7 +3,7 @@
 # For a wireless connection like XBee, the port is typically
 # /dev/ttyUSB# where # is a number such as 0, 1, 2, etc.
 
-port: 1    #/dev/ttyAMA0
+port: 1 #/dev/ttyACM0
 baud: 115200
 timeout: 0.5
 
@@ -17,10 +17,10 @@ base_controller_rate: 10
 base_frame: base_link
 
 # === Robot drivetrain parameters
-wheel_diameter: 0.060
-wheel_track: 0.205
-encoder_resolution: 48 # from Pololu for 130rpm motors
-gear_reduction: 46.8512
+wheel_diameter: 0.070
+wheel_track: 0.141 
+encoder_resolution: 12 # from Pololu for 130rpm motors
+gear_reduction: 120
 motors_reversed: False
 
 # === PID parameters
@@ -41,11 +41,11 @@ accel_limit: 1.0
 # * PhidgetsCurrent (20 Amp, DC)
 
 sensors: {
-  ir_1:                  {pin: 0, type: GP2Y0A60, rate: 10},
-  ir_2:                  {pin: 2, type: GP2Y0A60, rate: 10},
-  ir_3:                  {pin: 3, type: GP2Y0A60, rate: 10},
-  ir_4:                  {pin: 4, type: GP2Y0A60, rate: 10},
-  ir_5:                  {pin: 5, type: GP2Y0A60, rate: 10},
+  #ir_1:                  {pin: 0, type: GP2Y0A60, rate: 10},
+  #ir_2:                  {pin: 2, type: GP2Y0A60, rate: 10},
+  #ir_3:                  {pin: 3, type: GP2Y0A60, rate: 10},
+  #ir_4:                  {pin: 4, type: GP2Y0A60, rate: 10},
+  #ir_5:                  {pin: 5, type: GP2Y0A60, rate: 10},
   button_a:              {pin: 100, type: Digital, rate: 10},
   button_b:              {pin: 101, type: Digital, rate: 10},
 # Cannot use button C because reading it interferes with motor 1 PWM.
