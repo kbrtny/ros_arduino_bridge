@@ -26,11 +26,11 @@ class LSM6(object):
 
     def read_gyro(self):
         byte_list = self.bus.read_i2c_block_data(self.sa, Regs.OUTX_L_G, 6)
-        self.g = Vector(*struct.unpack('hhh', bytes(byte_list)))
+        self.g = Vector(*struct.unpack('hhh', ''.join(chr(x) for x in byte_list)))
 
     def read_accel(self):
-        byte_list = self.bus.read_i2c_bluck_data(self.sa, Regs.OUTX_L_XL, 6)
-        self.a = Vector(*struct.unpack('hhh', bytes(byte_list)))
+        byte_list = self.bus.read_i2c_block_data(self.sa, Regs.OUTX_L_XL, 6)
+        self.a = Vector(*struct.unpack('hhh', ''.join(chr(x) for x in byte_list)))
 
     def read(self):
         self.read_gyro()

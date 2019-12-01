@@ -8,9 +8,7 @@ import thread
 class RomiIMU():
     def __init__(self):
         rospy.init_node('RomiIMU', log_level=rospy.DEBUG)
-        
-        rospy.on_shutdown(self.shutdown)
-        
+                
         rate = rospy.Rate(100)
         
         self.imu_msg = Imu()
@@ -23,7 +21,7 @@ class RomiIMU():
         self.imu.enable()
         self.mutex.release()
         
-        while not rospy_is_shutdown():
+        while not rospy.is_shutdown():
             self.mutex.acquire()
             self.imu.read()
             self.mutex.release()
@@ -41,8 +39,6 @@ class RomiIMU():
             self.imu_pub.publish(self.imu_msg)
             
             rate.sleep()
-            
-    def shutdown(self):
-        
+                    
 if __name__ == '__main__':
     myRomiImu = RomiIMU()
